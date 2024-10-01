@@ -14,7 +14,7 @@ void appchar(char* str, char ch) {
 int main()
 {
 	char inits[] = " Repetitio est, mater studiorum !";
-	char result[] = "";
+	char result[100] = "";
 	int i = 0, col = 0;
 	char spec[] = " ;!,.?\t";
 	int strLen = strlen(inits);
@@ -23,14 +23,14 @@ int main()
 		if (!strchr(spec, inits[i]))
 		{
 			col++;
-			char word[] = "";
+			char word[100] = "";
 			while (!strchr(spec, inits[i]) && i < strLen)
 			{
 				appchar(word, inits[i]);
 				i++;
 			}
-			strcat_s(word, result);
 			appchar(word, spec[0]);
+			strcat_s(word, result);
 			std::swap(result, word);
 		}
 		else
