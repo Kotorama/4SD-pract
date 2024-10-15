@@ -9,6 +9,13 @@ using namespace std;
 
 int main() {
 	int n;
+	int** mas;
+
 	cout << "Input size for the square matrix" << endl;
 	cin >> n;
+
+	mas = new int* [n];
+	for (i = 0; i < n; i++) {
+		mas[i] = 
+	}
 };
