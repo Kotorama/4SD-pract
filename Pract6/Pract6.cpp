@@ -16,6 +16,8 @@ int main() {
 
 	mas = new int* [n];
 	for (i = 0; i < n; i++) {
-		mas[i] = 
+		mas[i] = new int[n];
 	}
+
+
 };
