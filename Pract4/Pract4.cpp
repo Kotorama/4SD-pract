@@ -3,10 +3,10 @@
 //кількість цього товару, ціна за кілограм.Відсортувати магазини для оптової
 //закупки заданого товару згідно його ціни
 #include <iostream>
-#include <vector>
 #include <string>
 
-using namespace std;
+using std::string;
+using std::cout;
 
 const int n = 3;
 struct Product {
@@ -17,17 +17,19 @@ struct Product {
 
 struct Shop {
     string shopName;
-    vector <Product> products;
+    Product products[3];
 };
 
-string priceSort(vector <Shop> shopVector, string product) {
+string priceSort(Shop (&shopArray)[3], string product) {
     int min = 0;
+    int shopSize = sizeof(shopArray) / sizeof(shopArray[0]);
     string name;
-    for (int i = 0; i < shopVector.size(); i++) {
-        for (int j = 0; j < shopVector.at(i).products.size(); j++) {
-            if (shopVector.at(i).products.at(j).cost < min || min == 0) {
-                min = shopVector.at(i).products.at(j).cost;
-                name = shopVector.at(i).shopName;
+    for (int i = 0; i < shopSize; i++) {
+        int productSize = sizeof(shopArray->products) / sizeof(shopArray->products[0]);
+        for (int j = 0; j < productSize; j++) {
+            if (shopArray[i].products[j].cost < min || min == 0) {
+                min = shopArray[i].products[j].cost;
+                name = shopArray[i].shopName;
             }
         }
     }
@@ -36,7 +38,7 @@ string priceSort(vector <Shop> shopVector, string product) {
 
 int main()
 {
-    vector <Shop> Marketplace = { 
+    Shop Marketplace[] = {
         { "Shop1", { {"Product1", 2, 6}, {"Product2", 2, 6}, {"Product3", 0, 6} } },
         { "Shop2", { {"Product1", 2, 9}, {"Product2", 0, 8}, {"Product3", 2, 7} } },
         { "Shop3", { {"Product1", 0, 8}, {"Product2", 2, 5}, {"Product3", 2, 2} } } };

@@ -4,69 +4,83 @@
 
 
 #include <iostream>
-#include <vector>
 
 using namespace std;
 
-int bubbleSort(vector<int> const &vect)
+int* bubbleSort(const int* original, const int n)
 {
-    if (typeid(vect) != typeid(vector<int>))
-    {
-        cout << "Bubble sort invalid array!";
-        return -100;
-    }
-    vector<int> vec = vect;
+    int* arr = new int[n];
 
-    int size = vec.size();
-    if (size == 1) {
-        return vec[0];
+    for (int i = 0; i < n; i++) {
+        arr[i] = original[i];
     }
-    for (int i = 0; i < size -1; i++) {
-        if (vec[i + 1] < vec[i]) {
-            swap(vec[i], vec[i + 1]);
-            if (i > 0) {
-                i -= 2;
+
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] < arr[j + 1]) {
+                int temp = arr[j + 1];
+                arr[j + 1] = arr[j];
+                arr[j] = temp;
+                swapped = true;
             }
-            
+        }
+        if (!swapped) {
+            break;
         }
     }
-    return vec[0];
-   
+    return arr;
 }
 
-int quickMin(vector<int> const& vec)
-{
-    if (typeid(vec) != typeid(vector<int>))
-    {
-        cout << "Invalid array!\n";
-        return -100;
+/// Bubble sort that prevents using new and delete to prevent memory leaks 
+
+unique_ptr<int[]> betterBubble(const int original[], int n) {
+    unique_ptr<int[]> arr = make_unique<int[]>(n);
+
+    for (int i = 0; i < n; i++) {
+        arr[i] = original[i];
     }
 
-    int size = vec.size();
-    int min = vec[0];
-    for (int i = 0; i < size; i++) {
-        if (vec[i]<min) {
-            min = vec[i];
-
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] < arr[j + 1]) {
+                int temp = arr[j + 1];
+                arr[j + 1] = arr[j];
+                arr[j] = temp;
+                swapped = true;
+            }
+        }
+        if (!swapped) {
+            break;
         }
     }
-    return min;
+
+    return arr;
 }
+
+
 
 int main()
 {
-    vector<int> vect{ 7, 5, 63, 2, 2 };
+    int arr[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1 };
 
-    cout << vect[0] << "\n";
+    int n = sizeof(arr) / sizeof(arr[0]);
 
-    int min = bubbleSort(vect);
+    int* sorted = bubbleSort(arr, n);
 
-    std::cout<< min << "\n";
+    for (int i = 1; i < 7; i++) {
+        cout << sorted[n - i] << "\n";
+    }
 
-    min = quickMin(vect);
+    delete[] sorted;
 
-    std::cout << min << "\n";
+    unique_ptr<int[]> safeSorted = betterBubble(arr, n);
 
-    cout << vect[0] << "\n";
+    for (int i = 1; i < 7; i++) {
+        cout << "\n" << safeSorted[n - i];
+    }
+
+    return 0;
 }
 
