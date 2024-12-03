@@ -1,300 +1,82 @@
-//Знайти шість найменших елементів масиву, користуючись функцією
-//сортування елементів
-//Переробити з масивами, сортування
+п»ї//Г‡Г­Г Г©ГІГЁ ГёВіГ±ГІГј Г­Г Г©Г¬ГҐГ­ГёГЁГµ ГҐГ«ГҐГ¬ГҐГ­ГІВіГў Г¬Г Г±ГЁГўГі, ГЄГ®Г°ГЁГ±ГІГіГѕГ·ГЁГ±Гј ГґГіГ­ГЄГ¶ВіВєГѕ
+//Г±Г®Г°ГІГіГўГ Г­Г­Гї ГҐГ«ГҐГ¬ГҐГ­ГІВіГў
+//ГЏГҐГ°ГҐГ°Г®ГЎГЁГІГЁ Г§ Г¬Г Г±ГЁГўГ Г¬ГЁ, Г±Г®Г°ГІГіГўГ Г­Г­Гї
 
 
 #include <iostream>
+#include <fstream>
+#include <vector>
 
 using namespace std;
 
-int numLength(int num) {
-    int length = 1;
-    while (num >= 10) {
-        num /= 10;
-        length++;
-    }
-    return length;
-};
+void shiftMatrix(std::vector<std::vector<int>>& matrix, int k) {
+    int rows = matrix.size();
+    int cols = matrix[0].size();
+    int perimeter = 2 * (rows + cols - 2);
 
-class Address {
-private:
-    unique_ptr<char[]> city, street, bNum;
+    k = k % perimeter;
 
-    int* defCount() {
-        static int defaultnum = 0;
+    for (int layer = 0; layer < min(M, N) / 2; ++layer) {
+        int top = layer, left = layer;
+        int bottom = M - layer - 1, right = N - layer - 1;
 
-        return &defaultnum;
-    }
+        vector<int> layer_elements;
 
-    int* defCount(int i) {
-        *defCount() += i;
-        return defCount();
-    }
+        for (int i = left; i <= right; ++i)
+            layer_elements.push_back(matrix[top][i]);
 
-public:
+        for (int i = top + 1; i <= bottom; ++i)
+            layer_elements.push_back(matrix[i][right]);
 
-    Address() {
-        int nLen, cSize, sSize, bNSize;
+        for (int i = right - 1; i >= left; --i)
+            layer_elements.push_back(matrix[bottom][i]);
 
-        nLen = numLength(*defCount());
-        cSize = strlen("City ") + nLen + 1;
-        sSize = strlen("Street ") + nLen + 1;
-        bNSize = nLen + 1;
+        for (int i = bottom - 1; i > top; --i)
+            layer_elements.push_back(matrix[i][left]);
 
-        city = make_unique<char[]>(cSize);
-        street = make_unique<char[]>(sSize);
-        bNum = make_unique<char[]>(bNSize);
+        int layer_size = layer_elements.size();
 
-        sprintf_s(city.get(), cSize, "%s%d", "City ", *defCount());
-        sprintf_s(street.get(), sSize, "%s%d", "Street ", *defCount());
-        sprintf_s(bNum.get(), bNSize, "%d", *defCount());
-
-        defCount(1);
-    }
-
-    Address(const char* cityName, const char* streetName, const char* buildingNum) {
-        int cSize, sSize, bNSize;
-
-        cSize = strlen(cityName) + 1;
-        sSize = strlen(streetName) + 1;
-        bNSize = strlen(streetName) + 1;
-
-        city = make_unique<char[]>(cSize);
-        street = make_unique<char[]>(sSize);
-        bNum = make_unique<char[]>(bNSize);
-
-        strcpy_s(city.get(), cSize, cityName);
-        strcpy_s(street.get(), sSize, streetName);
-        strcpy_s(bNum.get(), bNSize, buildingNum);
-    }
-
-    Address(const Address& other) {
-        int cSize, sSize, bNSize;
-
-        cSize = strlen(other.city.get()) + 1;
-        sSize = strlen(other.street.get()) + 1;
-        bNSize = strlen(other.bNum.get()) + 1;
-
-        city = make_unique<char[]>(cSize);
-        street = make_unique<char[]>(sSize);
-        bNum = make_unique<char[]>(bNSize);
-
-        strcpy_s(city.get(), cSize, other.city.get());
-        strcpy_s(street.get(), sSize, other.street.get());
-        strcpy_s(bNum.get(), bNSize, other.bNum.get());
-    }
-
-    ~Address() {
-        cout << "Address deconstructor" << "\n";
-    }
-
-    operator const char* () const {
-        return city.get();
-    }
-
-    Address& operator=(const Address& other) {
-        if (this != &other) {
-            int cSize, sSize, bNSize;
-
-            cSize = strlen(other.city.get()) + 1;
-            sSize = strlen(other.street.get()) + 1;
-            bNSize = strlen(other.bNum.get()) + 1;
-
-            city = make_unique<char[]>(cSize);
-            street = make_unique<char[]>(sSize);
-            bNum = make_unique<char[]>(bNSize);
-
-            strcpy_s(city.get(), cSize, other.city.get());
-            strcpy_s(street.get(), sSize, other.street.get());
-            strcpy_s(bNum.get(), bNSize, other.bNum.get());
-        }
-        return *this;
-    }
-
-    friend ostream& operator<<(ostream& os, const Address& a) {
-        os << "City: " << a.city.get() << ", Street: " << a.street.get() << ", Building number: " << a.bNum.get() << "\n";
-        return os;
-    }
-
-    void printAddress() const {
-        cout << "City: " << city.get() << ", Street: " << street.get() << ", Building number: " << bNum.get() << endl;
-    }
-};
-
-class Train {
-private:
-    int num, capacity, occupied;
-    bool isExpress;
-
-    int* defCount() {
-        static int defaultnum = 0;
-
-        return &defaultnum;
-    }
-
-    int* defCount(int i) {
-        *defCount() += i;
-        return defCount();
-    }
-
-public:
-    Train() {
-        num = *defCount();
-        capacity = 40;
-        occupied = 0;
-        isExpress = false;
-
-        defCount(1);
-    }
-
-    Train(int numParam, int capacityParam, int occupiedParam, bool isExpressParam) {
-        if (occupiedParam > capacityParam) {
-            occupiedParam = capacityParam;
-        }
-        num = numParam;
-        capacity = capacityParam;
-        occupied = occupiedParam;
-        isExpress = isExpressParam;
-    }
-
-    Train(const Train& other) {
-        num = other.num;
-        capacity = other.capacity;
-        occupied = other.occupied;
-        isExpress = other.isExpress;
-    }
-
-    ~Train() {
-        cout << "This is a deconstructor, lol" << '\n';
-    }
-
-    Train& operator=(const Train& other) {
-        if (this != &other) {
-            num = other.num;
-            capacity = other.capacity;
-            occupied = other.occupied;
-            isExpress = other.isExpress;
-        }
-        return *this;
-    }
-
-    operator int() const {
-        return num;
-    }
-
-    friend ostream& operator<<(ostream& os, const Train& t) {
-        os << "Train number: " << t.num << " Maximum capacity: " << t.capacity << " Seats occupied: " << t.occupied << " Express: " << (t.isExpress ? "Yes" : "No") << "\n";
-        return os;
-    }
-
-    int addPsgr() {
-        if (capacity > occupied) {
-            occupied++;
-            return 1;
-        }
-        else {
-            return 0;
-        }
-    }
-
-    int emptySeats() const {
-        return capacity - occupied;
-    }
-};
-
-class TrainStation {
-private: 
-    unique_ptr<char[]> name;
-    unique_ptr<Address> address;
-    unique_ptr<Train[]> trains;
-    int tSize;
-
-    int* defCount() {
-        static int defaultnum = 0;
-
-        return &defaultnum;
-    }
-
-    int* defCount(int i) {
-        *defCount() += i;
-        return defCount();
-    }
-
-public:
-    TrainStation() {
-        int dLen = numLength(*defCount());
-        int nSize = strlen("Station " + dLen);
-        tSize = 0;
-
-        address = make_unique<Address>();
-        name = make_unique<char[]>(nSize);
-        trains = make_unique<Train[]>(tSize);
-
-        sprintf_s(name.get(), nSize, "%s%d", "Station ", *defCount());
-
-        defCount(1);
-    }
-
-    TrainStation(const char* nameParam, Address& addParam, Train* trainsParam,size_t trainsSize) {
-        tSize = trainsSize;
-        int nSize = strlen(nameParam) + 1;
-
-        name = make_unique<char[]>(nSize);
-
-        strcpy_s(name.get(), nSize, nameParam);
-        
-        address = make_unique<Address>(addParam);
-
-        trains = make_unique<Train[]>(trainsSize);
-
-        for (size_t i = 0; i < trainsSize; i++) {
-            trains[i] = trainsParam[i];
+        vector<int> rotated_layer(layer_size);
+        for (int i = 0; i < layer_size; ++i) {
+            rotated_layer[(i + k) % layer_size] = layer_elements[i];
         }
 
+        int index = 0;
+
+        for (int i = left; i <= right; ++i)
+            matrix[top][i] = rotated_layer[index++];
+
+        for (int i = top + 1; i <= bottom; ++i)
+            matrix[i][right] = rotated_layer[index++];
+
+        for (int i = right - 1; i >= left; --i)
+            matrix[bottom][i] = rotated_layer[index++];
+
+        for (int i = bottom - 1; i > top; --i)
+            matrix[i][left] = rotated_layer[index++];
     }
-
-    TrainStation(const TrainStation& other) {
-        tSize = other.tSize;
-
-        int nSize = 0;
-        while (other.name[nSize] != '/0') nSize++;
-
-        name = make_unique<char[]>(nSize);
-
-        address = make_unique<Address>(*other.address);
-
-        trains = make_unique<Train[]>(tSize);
-
-        for (int i = 0; i < tSize; i++) {
-            trains[i] = other.trains[i];
-        }
-    }
-
-    TrainStation& operator=(const TrainStation& other) {
-        if (this != &other) {
-
-        }
-        return *this;
-    }
-};
-
+}
 
 int main()
 {
-    Address address1;
-    address1.printAddress();
-    Address address2;
-    address2.printAddress();
-    Address address3;
-    address3.printAddress();
 
-    Address properAddress("Lviv", "Linkolna str.", "15a");
-    properAddress.printAddress();
+    ifstream inputFile("matrix.txt");
 
-    address2 = properAddress;
-    address2.printAddress();
+    if (!inputFile) {
+        std::cerr << "Error opening file!" << std::endl;
+        return 1;
+    }
 
-    cout << address2;
+    int rows, cols;
+    inputFile >> rows >> cols;
+
+    inputFile.close();
+
+    vector<vector<int>> matrix(rows, vector<int>(cols));
+
+    for (int i{}; i < cols-1; i++) {
+        matrix.[]
+    }
 
     return 0;
 }
