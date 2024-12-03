@@ -1,6 +1,6 @@
-п»ї//Г‡Г­Г Г©ГІГЁ ГёВіГ±ГІГј Г­Г Г©Г¬ГҐГ­ГёГЁГµ ГҐГ«ГҐГ¬ГҐГ­ГІВіГў Г¬Г Г±ГЁГўГі, ГЄГ®Г°ГЁГ±ГІГіГѕГ·ГЁГ±Гј ГґГіГ­ГЄГ¶ВіВєГѕ
-//Г±Г®Г°ГІГіГўГ Г­Г­Гї ГҐГ«ГҐГ¬ГҐГ­ГІВіГў
-//ГЏГҐГ°ГҐГ°Г®ГЎГЁГІГЁ Г§ Г¬Г Г±ГЁГўГ Г¬ГЁ, Г±Г®Г°ГІГіГўГ Г­Г­Гї
+//Знайти шість найменших елементів масиву, користуючись функцією
+//сортування елементів
+//Переробити з масивами, сортування
 
 
 #include <iostream>
@@ -104,46 +104,15 @@ public:
 template <typename T>
 class DynamicArray {
 protected:
-    vector<T>;
-    int size;
+    vector<T> array;
 
 public:
-    DynamicArray(int size) : size(size) {
-        if (size < 0) {
-            throw invalid_argument("Р РѕР·РјС–СЂ РЅРµ РјР°С” Р±СѓС‚Рё РЅРµРіР°С‚РёРІРЅРёРј С‡РёСЃР»РѕРј!");
-        }
-        array = new T[size];
-    }
-
-    virtual ~DynamicArray() {
-        cout << "Virtual destructor is called." << endl;
+    DynamicArray(int size) {
+        array.resize(size);
     }
 
     virtual void input() = 0;
     virtual void output() = 0;
-
-    int getSize() const {
-        return size;
-    }
-};
-
-class TrainArray : public DynamicArray<Train> {
-public:
-    TrainArray(int size) : DynamicArray<Train>(size) {}
-
-    void input() override {
-        cout << "Р’РІРµРґС–С‚СЊ РґР°РЅС– РґР»СЏ " << size << " РїРѕС‚СЏРіС–РІ: \n";
-        for (int i = 0; i < size; ++i) {
-            array[i] = cin >> Train();
-        }
-    }
-
-    void output() override {
-        cout << "Train details: \n";
-        for (int i = 0; i < size; ++i) {
-            cout << Train();
-        }
-    }
 };
 
 class Train {
@@ -236,7 +205,7 @@ public:
             cout << "Number is out of range!" << endl;
         }
 
-        cout << "Enter building number (true/false): ";
+        cout << "Enter if express (true/false): ";
         input >> temp;
         if (temp == "true") {
             t.isExpress == true;
@@ -297,6 +266,26 @@ public:
 
     int getCap() const {
         return capacity;
+    }
+};
+
+class TrainArray : public DynamicArray<Train> {
+public:
+    TrainArray(int size) : DynamicArray<Train>(size) {}
+
+    void input() override {
+        cout << "Input data for " << array.size() << " trains: \n";
+        for (int i = 0; i < array.size(); ++i) {
+            cout << "Input data for train " << i << " \n";
+            cin >> array[i];
+        }
+    }
+
+    void output() override {
+        cout << "Train details: \n";
+        for (const auto& train : array) {
+            cout << train;
+        }
     }
 };
 
@@ -480,7 +469,9 @@ int main()
     s1.getAddress();
     s1.boardTrain(2);
 
-    cin >> TrainArray();
+    TrainArray trainArray(3);
+
+    trainArray.input();
 
     return 0;
 }
